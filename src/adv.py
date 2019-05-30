@@ -18,6 +18,10 @@ room['entrance'].s_to = room['lumbridge']
 room['entrance'].n_to = room['weaponstore']
 room['entrance'].w_to = room['bank']
 room['entrance'].e_to = room['library']
+room['weaponstore'].s_to = room['entrance']
+room['bank'].w_to = room['entrance']
+room['bank'].n_to = room['library']
+room['library'].s_to = room['bank']
 
 #
 # Main
