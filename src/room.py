@@ -3,6 +3,7 @@
 
 class Room:
     #dunder init
-    def __init__(self, name, description):
+    def __init__(self, name, description, room_items):
         self.name= name
         self.description= description
+        self.room_items= room_items
