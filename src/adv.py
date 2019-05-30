@@ -100,7 +100,7 @@ while selection != 'Q':
         elif selection == 'W':
             if hasattr(player.current_room, 'w_to'):
                 clear()
-                lady.current_room = player.current_room.w_to
+                player.current_room = player.current_room.w_to
                 print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
             else:
                 clear()
