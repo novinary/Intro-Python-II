@@ -2,7 +2,6 @@ import re
 from room import Room
 from player import Player
 from os import system, name 
-from time import sleep 
 
 # define clear function
 def clear(): 
@@ -38,7 +37,7 @@ room['library'].s_to = room['bank']
 
 # Make a new player object that is currently in the 'outside' room.
 
-player = Player("Bob", room['lumbridge'], ['wood', 'lighter', 'tuna'])
+player = Player("Bob", room['lumbridge'], ['WOOD', 'LIGHTER', 'TUNA'])
 clear()
 welcome_msg = """
  ──────▄▀▀▀▀▀▀▀▄─────── 
@@ -68,6 +67,36 @@ def room_items():
         output += (" " + i + "\n✿ ❀ ❁ ✾ ✽ ❃\n\n")
     return output
 
+def add_items():
+    item = input("If you would like to take an item, type 'Take' and the item. \n Or you may type 'No': ")
+    if len(item) != 0:
+        if item.split()[0].upper() == 'TAKE' or item.split()[0].upper() == 'NO':
+            if item.split()[0].upper() == 'TAKE':
+                clear()
+                # use append to add to player inventory
+                # remove from room
+                player.current_room = player.current_room
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                if len(player.current_room.room_items) != 0:
+                    print ('This room has following items:\n')
+                    print(room_items())
+                    print("\n")
+                else:
+                    print("No items in this room.\n\n")
+            else:
+                if item.split()[0].upper() == 'NO':
+                    clear()
+                    player.current_room = player.current_room
+                    print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                    if len(player.current_room.room_items) != 0:
+                        print ('This room has following items:\n')
+                        print(room_items())
+                        print("\n")
+                else:
+                    print("No items in this room.\n\n")
+        else:
+            print("\nPlease specify 'Take' or 'No'\n")
+
 selection = ""
 # * Waits for user input and decides what to do.
 # If the user enters a cardinal direction, attempt to move to the room there.
@@ -87,6 +116,7 @@ while selection != 'Q':
                     print ('This room has following items:\n')
                     print(room_items())
                     print("\n\n") 
+                    add_items()
                 else:
                     print("No items in this room\n\n") 
             else:
