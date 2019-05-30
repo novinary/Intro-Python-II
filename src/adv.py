@@ -1,6 +1,15 @@
 import re
 from room import Room
 from player import Player
+from os import system, name 
+from time import sleep 
+
+# define clear function
+def clear(): 
+    if name == 'nt': 
+        _ = system('cls') 
+    else: 
+        _ = system('clear') 
 
 # Declare all the room
 room = {
@@ -30,20 +39,21 @@ room['library'].s_to = room['bank']
 # Make a new player object that is currently in the 'outside' room.
 
 player = Player("Bob", room['lumbridge'])
-
-print("\n")
-print(" ──────▄▀▀▀▀▀▀▀▄─────── ")
-print(" ─────▐─▄█▀▀▀█▄─▌────── ")
-print(" ─────▐─▀█▄▄▄█▀─▌────── ")
-print(" ──────▀▄▄▄▄▄▄▄▀─────── ")
-print(" ─────▐▀▄▄▐█▌▄▄▀▌────── ")
-print(" ──────▀▄▄███▄▄▀─────── ")
-print(" █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█ ")
-print(" █░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█ ")
-print(" █░░║║║╠─║─║─║║║║║╠─░░█ ")
-print(" █░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█ ")
-print(" █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█ ")
-print("\n")
+clear()
+welcome_msg = """
+ ──────▄▀▀▀▀▀▀▀▄─────── 
+ ─────▐─▄█▀▀▀█▄─▌────── 
+ ─────▐─▀█▄▄▄█▀─▌────── 
+ ──────▀▄▄▄▄▄▄▄▀─────── 
+ ─────▐▀▄▄▐█▌▄▄▀▌────── 
+ ──────▀▄▄███▄▄▀─────── 
+ █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█ 
+ █░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█ 
+ █░░║║║╠─║─║─║║║║║╠─░░█ 
+ █░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█ 
+ █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█ 
+ """
+print(welcome_msg)
 
 # Write a loop that:
 #
@@ -53,43 +63,52 @@ print("\nWelcome " + player.name + "! \nWe are very excited for you to begin you
 print("You are currently in the world: " + player.current_room.name + ".")
 print(player.current_room.description + "\n")
 
-selection = input("Where would you like to head today, N-North, S-South, E-East, or W-West \n or Q-Quit: ")
-selection = selection.upper()
-
+selection = ""
 # * Waits for user input and decides what to do.
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
-if len(re.findall("[NSEWRQ]", selection)) == 1:
-    while selection != 'Q':
+while selection != 'Q':
+    selection = input("Where would you like to head today, N-North, S-South, E-East, or W-West \n or Q-Quit: ")
+    selection = selection.upper()
+    if len(re.findall("[NSEWRQ]", selection)) == 1:
         if selection == 'N':
             if hasattr(player.current_room, 'n_to'):
+                clear()
                 player.current_room = player.current_room.n_to
-                print('Welcome to  the ' + str(player.current_room.name))
-                break
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
             else:
+                clear()
                 print("Apologies but there is nothing in that direction.")
         elif selection == 'S':
             if hasattr(player.current_room, 's_to'):
+                clear()
                 player.current_room = player.current_room.s_to
-                print('Welcome to the ' + player.current_room.name)
-                break
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
             else:
+                clear()
                 print("Apologies but there is nothing in that direction.")
         elif selection == 'E':
             if hasattr(player.current_room, 'e_to'):
+                clear()
                 player.current_room = player.current_room.e_to
-                print('Welcome to the ' + player.current_room.name)
-                break
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
             else:
+                clear()
                 print("Aologies but there is nothing in that direction.")
         elif selection == 'W':
             if hasattr(player.current_room, 'w_to'):
+                clear()
                 lady.current_room = player.current_room.w_to
-                print('Welcome to the ' + player.current_room.name)
-                break
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
             else:
+                clear()
                 print("Apologies but there is nothing in that direction.")
+        elif selection == 'Q':
+            clear()
+            print("Goodbye for now.")
+            quit()
         else:
+            clear()
             print("Please select a valid command!")
