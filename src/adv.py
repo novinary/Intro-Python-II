@@ -1,37 +1,35 @@
+import re
 from room import Room
+from player import Player
+from os import system, name 
 
-# Declare all the rooms
+# define clear function
+def clear(): 
+    if name == 'nt': 
+        _ = system('cls') 
+    else: 
+        _ = system('clear') 
 
+# Declare all the room
 room = {
-    'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
-
-    'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
-
-    'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
-into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
-
-    'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
-
-    'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
-chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+    'lumbridge': Room("Lumbridge", """Welcome to the kingdom of Lumbridge!""",[]),
+    'entrance': Room("Entrance", """Please come in!""",['grass','rocks', 'dust']),
+    'weaponstore': Room("Weapon Store", """Variety of weapons to choose from.""",['sword', 'dagger', 'knife']),
+    'bank': Room("Bank", """Access your personal bank here""",['100 gbp']),
+    'library': Room("Library", """All information about Lumbridge is available here. From our people to weapons.""",['Modern History', 'Mountain Trolls', 'Varrock City']),
+    'dine': Room("Dining Hall", """Incredible feast are freshly prepared everyday""",['Cake', 'Baguette', 'Meatloaf'])
 }
 
-
-# Link rooms together
-
-room['outside'].n_to = room['foyer']
-room['foyer'].s_to = room['outside']
-room['foyer'].n_to = room['overlook']
-room['foyer'].e_to = room['narrow']
-room['overlook'].s_to = room['foyer']
-room['narrow'].w_to = room['foyer']
-room['narrow'].n_to = room['treasure']
-room['treasure'].s_to = room['narrow']
+# # Link rooms together
+room['lumbridge'].n_to = room['entrance']
+room['entrance'].s_to = room['lumbridge']
+room['entrance'].n_to = room['weaponstore']
+room['entrance'].w_to = room['bank']
+room['entrance'].e_to = room['library']
+room['weaponstore'].s_to = room['entrance']
+room['bank'].w_to = room['entrance']
+room['bank'].n_to = room['library']
+room['library'].s_to = room['bank']
 
 #
 # Main
@@ -39,13 +37,144 @@ room['treasure'].s_to = room['narrow']
 
 # Make a new player object that is currently in the 'outside' room.
 
+player = Player("Bob", room['lumbridge'], ['WOOD', 'LIGHTER', 'TUNA'])
+clear()
+welcome_msg = """
+ ──────▄▀▀▀▀▀▀▀▄─────── 
+ ─────▐─▄█▀▀▀█▄─▌────── 
+ ─────▐─▀█▄▄▄█▀─▌────── 
+ ──────▀▄▄▄▄▄▄▄▀─────── 
+ ─────▐▀▄▄▐█▌▄▄▀▌────── 
+ ──────▀▄▄███▄▄▀─────── 
+ █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█ 
+ █░░╦─╦╔╗╦─╔╗╔╗╔╦╗╔╗░░█ 
+ █░░║║║╠─║─║─║║║║║╠─░░█ 
+ █░░╚╩╝╚╝╚╝╚╝╚╝╩─╩╚╝░░█ 
+ █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█ 
+ """
+print(welcome_msg)
+
 # Write a loop that:
 #
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
+# * Prints the current room name/description
+print("\nWelcome " + player.name + "! \nWe are very excited for you to begin your quest. \n")
+
+print("You are currently logged into the world: " + player.current_room.name + ".\n" + player.current_room.description + "\n\n")
+
+def room_items():
+    output = ''
+    for i in player.current_room.room_items:
+        output += (" " + i + "\n✿ ❀ ❁ ✾ ✽ ❃\n\n")
+    return output
+
+def add_items():
+    item = input("If you would like to take an item, type 'Take' and the item. \n Or you may type 'No': ")
+    if len(item) != 0:
+        if item.split()[0].upper() == 'TAKE' or item.split()[0].upper() == 'NO':
+            if item.split()[0].upper() == 'TAKE':
+                clear()
+                # use append to add to player inventory
+                # remove from room
+                player.current_room = player.current_room
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                if len(player.current_room.room_items) != 0:
+                    print ('This room has following items:\n')
+                    print(room_items())
+                    print("\n")
+                else:
+                    print("No items in this room.\n\n")
+            else:
+                if item.split()[0].upper() == 'NO':
+                    clear()
+                    player.current_room = player.current_room
+                    print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                    if len(player.current_room.room_items) != 0:
+                        print ('This room has following items:\n')
+                        print(room_items())
+                        print("\n")
+                else:
+                    print("No items in this room.\n\n")
+        else:
+            print("\nPlease specify 'Take' or 'No'\n")
+
+selection = ""
 # * Waits for user input and decides what to do.
-#
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+while selection != 'Q':
+    selection = input("Where would you like to head today, N-North, S-South, E-East, or W-West \n or R-Check your Inventory or Q-Quit: ")
+    selection = selection.upper()
+    if len(re.findall("[NSEWRQ]", selection)) == 1:
+        if selection == 'N':
+            if hasattr(player.current_room, 'n_to'):
+                clear()
+                player.current_room = player.current_room.n_to
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                if len(player.current_room.room_items) != 0:
+                    print ('This room has following items:\n')
+                    print(room_items())
+                    print("\n\n") 
+                    add_items()
+                else:
+                    print("No items in this room\n\n") 
+            else:
+                clear()
+                print("Apologies but there is nothing in that direction.")
+        elif selection == 'S':
+            if hasattr(player.current_room, 's_to'):
+                clear()
+                player.current_room = player.current_room.s_to
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                if len(player.current_room.room_items) != 0:
+                    print ('This room has following items:\n')
+                    print(room_items())
+                    print("\n\n") 
+                else:
+                    print("No items in this room\n\n") 
+            else:
+                clear()
+                print("Apologies but there is nothing in that direction.")
+        elif selection == 'E':
+            if hasattr(player.current_room, 'e_to'):
+                clear()
+                player.current_room = player.current_room.e_to
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                if len(player.current_room.room_items) != 0:
+                    print ('This room has following items:\n')
+                    print(room_items())
+                    print("\n\n") 
+                else:
+                    print("No items in this room\n\n") 
+            else:
+                clear()
+                print("Aologies but there is nothing in that direction.")
+        elif selection == 'W':
+            if hasattr(player.current_room, 'w_to'):
+                clear()
+                player.current_room = player.current_room.w_to
+                print('Welcome to the ' + player.current_room.name + '\n' + player.current_room.description + "\n\n")
+                if len(player.current_room.room_items) != 0:
+                    print ('This room has following items:\n')
+                    print(room_items())
+                    print("\n\n") 
+                else:
+                    print("No items in this room\n\n") 
+            else:
+                clear()
+                print("Apologies but there is nothing in that direction.")
+        elif selection == 'R':
+            clear()
+            print("Items in your inventory:\n\n")
+            for i in player.inventory:
+                print("  " + i)
+                print("✿ ❀ ❁ ✾ ✽ ❃")
+            print('\n\n')
+        elif selection == 'Q':
+            clear()
+            print("Goodbye for now.")
+            quit()
+        else:
+            clear()
+            print("Please select a valid command!")
